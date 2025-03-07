@@ -64,6 +64,5 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" \
-              --label "org.opencontainers.image.description=${{ matrix.BASE_OS }} CI image based on AequilibraE ${{ env.LATEST_TAG }}" .
+          docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" --label "org.opencontainers.image.description=${{ matrix.BASE_OS }} CI image based on AequilibraE ${{ env.LATEST_TAG }}" .
           docker push "${{ steps.meta.outputs.tags }}"
