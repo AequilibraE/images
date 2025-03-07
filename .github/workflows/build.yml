@@ -13,11 +13,11 @@ jobs:
         include:
           - os: windows-latest
             DOCKERFILE: Dockerfile-windows-ci
-            BASE_OS: servercore:ltsc2022
+            BASE_OS: servercore-ltsc2022
 
           - os: ubuntu-latest
             DOCKERFILE: Dockerfile-ubuntu-ci
-            BASE_OS: ubuntu:24.04
+            BASE_OS: ubuntu-24.04
 
     permissions:
       packages: write
@@ -62,20 +62,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=${{ matrix.BASE_OS }}
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-
       - name: Build and push Docker images
         run: |
-          docker build -f ${{ matrix.DOCKERFILE }} -t "${{ steps.meta.outputs.tags }}" --label "${{ steps.meta.outputs.labels }}" .
+          docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" \
+              --label "org.opencontainers.image.description=${{ matrix.BASE_OS }} CI image based on AequilibraE ${{ env.LATEST_TAG }}" .
           docker push "${{ steps.meta.outputs.tags }}"
