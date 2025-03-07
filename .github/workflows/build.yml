@@ -80,5 +80,5 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          docker build -f ${{ matrix.DOCKERFILE }} -t ${{ steps.meta.outputs.tags }} --label ${{ steps.meta.outputs.labels }} .
+          docker build -f ${{ matrix.DOCKERFILE }} -t "${{ steps.meta.outputs.tags }}" --label "${{ steps.meta.outputs.labels }}" .
           docker push ${{ steps.meta.outputs.tags }}
