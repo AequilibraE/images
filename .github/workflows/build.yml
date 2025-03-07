@@ -71,8 +71,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-            type=raw,value="os=${{ matrix.os }}"
-            type=raw,value="aequilibrae_ref=${{ env.LATEST_TAG }}"
+            type=raw,value=os=${{ matrix.os }}
+            type=raw,value=aequilibrae_ref=${{ env.LATEST_TAG }}
 
       - name: Build and push Docker images
         run: |

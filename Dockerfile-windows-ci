@@ -45,5 +45,7 @@ RUN for py_version in py39 py310 py311 py312; do `
         deactivate; `
     done
 
-RUN powershell -Command "Remove-Item -Path C:\aequilibrae -Recurse -Force"
-RUN powershell -Command "Remove-Item -Path C:\TEMP -Recurse -Force"
+RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
+RUN Remove-Item -Path C:\TEMP -Recurse -Force
+
+LABEL org.opencontainers.image.description "Windows CI image for AequilibraE"
