@@ -25,7 +25,7 @@ RUN uv venv --python 3.9  venv-py39  && `
 
 # Install AequilibraE for its dependencies, then remove it
 COPY aequilibrae aequilibrae
-RUN . venv-py39/bin/activate  && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
-    . venv-py310/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
-    . venv-py311/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
-    . venv-py312/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate
+RUN . venv-py39/bin/activate  && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt && deactivate && `
+    . venv-py310/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt && deactivate && `
+    . venv-py311/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt && deactivate && `
+    . venv-py312/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt && deactivate
