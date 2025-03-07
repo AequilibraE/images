@@ -6,21 +6,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build-ci-images:
+    name: Build and push CI image to GitHub package registry
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+    include:
+      - os: windows-latest
+        DOCKERFILE: Dockerfile-windows-ci
+      - os: ubuntu-latest
+        DOCKERFILE: Dockerfile-ubuntu-ci
 
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Checkout AequilibraE for deps
+      - name: Checkout AequilibraE for dependencies
         uses: actions/checkout@v4
         with:
           repository: AequilibraE/aequilibrae
           path: aequilibrae
           fetch-depth: 0
 
-      - name: Get and checkout latest tag
+      - name: Get and checkout latest tag on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: aequilibrae
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          git checkout --quiet $LATEST_TAG
+          echo "Checked out tag: $LATEST_TAG"
+
+      - name: Get and checkout latest tag on Windows
+        if: matrix.os == 'windows-latest'
         working-directory: aequilibrae
         shell: powershell
         run: |
@@ -28,50 +50,33 @@ jobs:
           git checkout --quiet $LATEST_TAG
           echo "Checked out tag: $LATEST_TAG"
 
-      # - name: Log in to registry
-      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      # - name: Build and Push
-      #   shell: powershell
-      #   run: |
-      #     docker build -t ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
-      #     docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
-
-      - name: Build Windows CI
-        shell: powershell
-        run: |
-          docker build -t windows-ci:latest -f Dockerfile-windows-ci .
-
-  build-ubuntu:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Checkout AequilibraE for deps
-        uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          repository: AequilibraE/aequilibrae
-          path: aequilibrae
-          fetch-depth: 0
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get and checkout latest tag
-        working-directory: aequilibrae
-        run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0)
-          git checkout --quiet $LATEST_TAG
-          echo "Checked out tag: $LATEST_TAG"
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
 
-      # - name: Log in to registry
-      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build and push Docker images
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.DOCKERFILE }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-      # - name: Build and Push
-      #   shell: powershell
-      #   run: |
-      #     docker build -t ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
-      #     docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
-
-      - name: Build Ubuntu CI
-        run: |
-          docker build -t ubuntu-ci:latest -f Dockerfile-ubuntu-ci .
+      - name: Generate artefact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
