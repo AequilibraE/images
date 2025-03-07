@@ -12,12 +12,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-      include:
-        - os: windows-latest
-          DOCKERFILE: Dockerfile-windows-ci
+        include:
+          - os: windows-latest
+            DOCKERFILE: Dockerfile-windows-ci
 
-        - os: ubuntu-latest
-          DOCKERFILE: Dockerfile-ubuntu-ci
+          - os: ubuntu-latest
+            DOCKERFILE: Dockerfile-ubuntu-ci
 
     permissions:
       packages: write
