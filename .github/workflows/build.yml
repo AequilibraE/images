@@ -8,10 +8,25 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Checkout AequilibraE for deps
+        uses: actions/checkout@v4
+        with:
+          repository: AequilibraE/aequilibrae
+          path: aequilibrae
+          fetch-depth: 1
+          fetch-tags: true
+
+      - name: Get and checkout latest tag
+        working-directory: aequilibrae
+        run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          git checkout $LATEST_TAG
+          echo "Checked out tag: $LATEST_TAG"
 
       # - name: Log in to registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -26,13 +41,28 @@ jobs:
         shell: powershell
         run: |
           docker build -t windows-ci:latest -f Dockerfile-windows-ci .
-        
+
   build-ubuntu:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Checkout AequilibraE for deps
+        uses: actions/checkout@v4
+        with:
+          repository: AequilibraE/aequilibrae
+          path: aequilibrae
+          fetch-depth: 1
+          fetch-tags: true
+
+      - name: Get and checkout latest tag
+        working-directory: aequilibrae
+        run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          git checkout $LATEST_TAG
+          echo "Checked out tag: $LATEST_TAG"
 
       # - name: Log in to registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

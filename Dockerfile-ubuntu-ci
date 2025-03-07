@@ -4,8 +4,9 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -y && `
-    apt install -y --no-install-recommends curl ca-certificates libsqlite3-mod-spatialite libspatialite-dev git && `
-    ln -s /usr/lib/x86_64-linux-gnu/mod_spatialite.so /usr/lib/x86_64-linux-gnu/mod_spatialite
+    apt install -y --no-install-recommends curl ca-certificates libsqlite3-mod-spatialite libspatialite-dev git build-essential && `
+    ln -s /usr/lib/x86_64-linux-gnu/mod_spatialite.so /usr/lib/x86_64-linux-gnu/mod_spatialite && `
+    rm -rf /var/lib/apt/lists/*
 
 # Install UV to manage Python versions and venvs
 ADD https://astral.sh/uv/0.6.5/install.sh /uv-installer.sh
@@ -23,7 +24,8 @@ RUN uv venv --python 3.9  venv-py39  && `
     uv venv --python 3.12 venv-py312
 
 # Install AequilibraE for its dependencies, then remove it
-RUN . venv-py39/bin/activate  && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
-    . venv-py310/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
-    . venv-py311/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
-    . venv-py312/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate
+COPY aequilibrae aequilibrae
+RUN . venv-py39/bin/activate  && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
+    . venv-py310/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
+    . venv-py311/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate && `
+    . venv-py312/bin/activate && uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements.txt && deactivate
