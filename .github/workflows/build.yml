@@ -18,13 +18,12 @@ jobs:
         with:
           repository: AequilibraE/aequilibrae
           path: aequilibrae
-          fetch-depth: 1
-          fetch-tags: true
+          fetch-depth: 0
 
       - name: Get and checkout latest tag
         working-directory: aequilibrae
         run: |
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          LATEST_TAG=$(git describe --tags --abbrev=0)
           git checkout $LATEST_TAG
           echo "Checked out tag: $LATEST_TAG"
 
@@ -54,13 +53,12 @@ jobs:
         with:
           repository: AequilibraE/aequilibrae
           path: aequilibrae
-          fetch-depth: 1
-          fetch-tags: true
+          fetch-depth: 0
 
       - name: Get and checkout latest tag
         working-directory: aequilibrae
         run: |
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          LATEST_TAG=$(git describe --tags --abbrev=0)
           git checkout $LATEST_TAG
           echo "Checked out tag: $LATEST_TAG"
 
