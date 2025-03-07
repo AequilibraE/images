@@ -1,4 +1,4 @@
-name: Build Windows Docker Image for AequilibraE CI
+name: Build Docker images for AequilibraE CI
 
 on:
   push:
@@ -6,18 +6,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
-    environment: prod
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      # - name: Log in to registry
+      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build and Push
+      # - name: Build and Push
+      #   shell: powershell
+      #   run: |
+      #     docker build -t ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
+      #     docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
+
+      - name: Build Windows CI
         shell: powershell
-        run: |
-          docker build -t ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
-          docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
+        run: docker build -t windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
+        
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Log in to registry
+      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # - name: Build and Push
+      #   shell: powershell
+      #   run: |
+      #     docker build -t ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
+      #     docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
+
+      - name: Build Ubuntu CI
+        shell: powershell
+        run: docker build -t ubuntu-ci:latest -f Dockerfile-ubuntu-ci ci/aequilibrae/
