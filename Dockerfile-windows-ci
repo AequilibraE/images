@@ -26,7 +26,7 @@ RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-in
 RUN Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z; `
     & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\spatialite; `
     Remove-Item -Path .\mod_spatialite.7z; `
-    setx /M PATH "$($env:PATH);C:\spatialite"
+    setx /M PATH "`"$env:PATH;C:\spatialite`""
 
 # Install UV to manage Python versions and venvs
 RUN powershell -ExecutionPolicy Bypass -Command "irm https://astral.sh/uv/install.ps1 | iex"
