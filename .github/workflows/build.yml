@@ -7,8 +7,6 @@ on:
 
 jobs:
   build-ci-images:
-    name: Build and push CI image to GitHub package registry
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -66,6 +64,9 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker images
         id: push
