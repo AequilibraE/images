@@ -26,6 +26,7 @@ jobs:
         shell: powershell
         run: |
           dir
+          dir ci
           docker build -t windows-ci:latest -f Dockerfile-windows-ci ci\aequilibrae\
         
   build-ubuntu:
@@ -45,4 +46,7 @@ jobs:
       #     docker push ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/windows-ci:latest
 
       - name: Build Ubuntu CI
-        run: docker build -t ubuntu-ci:latest -f Dockerfile-ubuntu-ci ci/aequilibrae/
+        run: |
+          ls -la
+          ls -la ci
+          docker build -t ubuntu-ci:latest -f Dockerfile-ubuntu-ci ci/aequilibrae/
