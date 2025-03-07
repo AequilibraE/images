@@ -13,11 +13,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to Container registry
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and Push
         shell: powershell
