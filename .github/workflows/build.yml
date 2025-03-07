@@ -34,7 +34,7 @@ jobs:
           path: aequilibrae
           fetch-depth: 0
 
-      - name: Get and checkout latest tag on Ubuntu
+      - name: Get and checkout latest tag (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         working-directory: aequilibrae
         run: |
@@ -42,7 +42,7 @@ jobs:
           git checkout --quiet $LATEST_TAG
           echo "Checked out tag: $LATEST_TAG"
 
-      - name: Get and checkout latest tag on Windows
+      - name: Get and checkout latest tag (Windows)
         if: matrix.os == 'windows-latest'
         working-directory: aequilibrae
         shell: powershell
@@ -65,7 +65,8 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}
 
-      - name: Build and push Docker images
+      - name: Build and push Docker images (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         id: push
         uses: docker/build-push-action@v6
         with:
@@ -74,6 +75,17 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Docker images (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          docker build -f $env:MATRIX_DOCKERFILE -t $env:DOCKER_TAG .
+          docker push $env:DOCKER_TAG
+        env:
+          DOCKER_TAG: ${{ steps.meta.outputs.tags }}
+          MATRIX_DOCKERFILE: ${{ matrix.DOCKERFILE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate artefact attestation
         uses: actions/attest-build-provenance@v2
