@@ -35,6 +35,11 @@ jobs:
           repository: AequilibraE/aequilibrae
           path: aequilibrae
           fetch-depth: 0
+          sparse-checkout: |
+            requirements.txt
+            tests/requirements_tests.txt
+            docs/requirements-docs.txt
+          sparse-checkout-cone-mode: false
 
       - name: Get and checkout latest tag (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
