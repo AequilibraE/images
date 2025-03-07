@@ -18,8 +18,8 @@ This repository contains Docker configurations for building CI environments for 
   - `Windows`: Extracted to `C:\spatialite` and added to the system `PATH`.
   
 - **Python Virtual Environments**:
-  - `Ubuntu`: Created in the project root as `venv-py39`, `venv-py310`, etc. Activate using `. venv-name/bin/activate`.
-  - `Windows`: Created in the project root as `venv-py39`, `venv-py310`, etc. Activate using `venv-name\Scripts\activate`.
+  - `Ubuntu`: Created in the root directory as `venv-py39`, `venv-py310`, etc. Activate using `. venv-name/bin/activate`.
+  - `Windows`: Created in the root directory as `venv-py39`, `venv-py310`, etc. Activate using `venv-name\Scripts\activate`.
 
 - **Build Tools (Windows only)**:
   - Visual Studio Build Tools 2022 are installed at `C:\BuildTools` with the native desktop workload.
