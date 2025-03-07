@@ -35,30 +35,14 @@ RUN powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 
 
 # Create venvs (and install python versions), use venv-py310\Scripts\activate to activate
 RUN powershell -Command `
+    uv venv --python 3.9  venv-py39  && `
     uv venv --python 3.10 venv-py310 && `
     uv venv --python 3.11 venv-py311 && `
-    uv venv --python 3.12 venv-py312 && `
-    uv venv --python 3.13 venv-py313
+    uv venv --python 3.12 venv-py312
 
 # Install AequilibraE for its dependencies, then remove it
 RUN powershell -Command `
+    venv-py39\Scripts\activate  && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
     venv-py310\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
     venv-py311\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
-    venv-py312\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
-    venv-py313\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate
-
-
-
-# # Install Chocolately
-# ENV chocolateyVersion=1.4.0
-# RUN @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat `
-#     None -ExecutionPolicy Bypass -Command `
-#     "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" `
-#     && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-
-# # install basic tools
-# RUN powershell -NoProfile -InputFormat None -Command "choco install git 7zip -y"
-# RUN powershell -NoProfile -InputFormat None -Command "choco install cmake.install -y --installargs '\"ADD_CMAKE_TO_PATH=System\"'"
-
-# # Make sure that ssl certs are available in python
-# RUN powershell -NoProfile -InputFormat None -Command "certutil -generateSSTFromWU roots.sst ; certutil -addstore -f root roots.sst ; del roots.sst"
+    venv-py312\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate
