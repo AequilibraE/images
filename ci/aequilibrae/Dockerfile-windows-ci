@@ -42,10 +42,10 @@ RUN powershell -Command `
 
 # Install AequilibraE for its dependencies, then remove it
 RUN powershell -Command `
-    venv-py310\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
-    venv-py311\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
-    venv-py312\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
-    venv-py313\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae
+    venv-py310\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
+    venv-py311\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
+    venv-py312\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
+    venv-py313\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate
 
 
 
