@@ -72,8 +72,9 @@ jobs:
             type=raw,value=os=${{ matrix.BASE_OS }}
             type=raw,value=build-date=${{ github.run_date }}
             type=schedule
-            type=sha
-            type=ref
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
 
       - name: Build and push Docker images
         run: |
