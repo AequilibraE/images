@@ -39,11 +39,13 @@ RUN uv venv --python 3.9  venv-py39; `
     uv venv --python 3.11 venv-py311; `
     uv venv --python 3.12 venv-py312
 
-RUN for py_version in py39 py310 py311 py312; do `
-        venv-$py_version\Scripts\activate; `
-        uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; `
-        deactivate; `
-    done
+COPY aequilibrae aequilibrae
+# Install AequilibraE for its dependencies, then remove it
+RUN venv-py39\Scripts\activate;  uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+    venv-py310\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+    venv-py311\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+    venv-py312\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate
+
 
 RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
 RUN Remove-Item -Path C:\TEMP -Recurse -Force
