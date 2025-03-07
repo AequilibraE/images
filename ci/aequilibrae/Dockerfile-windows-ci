@@ -1,0 +1,64 @@
+# escape=`
+
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
+
+# Reset the shell.
+SHELL ["cmd", "/S", "/C"]
+
+# Download channel for fixed install.
+ARG CHANNEL_URL=https://aka.ms/vs/17/release/channel
+ADD ${CHANNEL_URL} C:\TEMP\VisualStudio.chman
+
+# Download and install Build Tools for Visual Studio 2022 for native desktop workload.
+ADD https://aka.ms/vs/17/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
+RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
+    --channelUri C:\TEMP\VisualStudio.chman `
+    --installChannelUri C:\TEMP\VisualStudio.chman `
+    --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
+    --installPath C:\BuildTools
+
+# Install 7-zip to extract SpatiaLite files
+RUN powershell -Command `
+    Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-installer.exe && `
+    Start-Process -FilePath .\7z-installer.exe -ArgumentList '/S' -Wait && `
+    Remove-Item -Path .\7z-installer.exe
+
+# Download and extract SpatiaLite
+RUN powershell -Command `
+    Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z && `
+    & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -o/spatialite && `
+    Remove-Item -Path .\spatialite-tools.7z && `
+    setx /M PATH "%PATH%;C:\spatialite"
+
+# Install UV to manage Python versions and venvs
+RUN powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Create venvs (and install python versions), use venv-py310\Scripts\activate to activate
+RUN powershell -Command `
+    uv venv --python 3.10 venv-py310 && `
+    uv venv --python 3.11 venv-py311 && `
+    uv venv --python 3.12 venv-py312 && `
+    uv venv --python 3.13 venv-py313
+
+# Install AequilibraE for its dependencies, then remove it
+RUN powershell -Command `
+    venv-py310\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
+    venv-py311\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
+    venv-py312\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && `
+    venv-py313\Scripts\activate && uv pip install aequilibrae && uv pip uninstall aequilibrae
+
+
+
+# # Install Chocolately
+# ENV chocolateyVersion=1.4.0
+# RUN @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat `
+#     None -ExecutionPolicy Bypass -Command `
+#     "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" `
+#     && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+
+# # install basic tools
+# RUN powershell -NoProfile -InputFormat None -Command "choco install git 7zip -y"
+# RUN powershell -NoProfile -InputFormat None -Command "choco install cmake.install -y --installargs '\"ADD_CMAKE_TO_PATH=System\"'"
+
+# # Make sure that ssl certs are available in python
+# RUN powershell -NoProfile -InputFormat None -Command "certutil -generateSSTFromWU roots.sst ; certutil -addstore -f root roots.sst ; del roots.sst"
