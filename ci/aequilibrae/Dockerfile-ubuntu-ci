@@ -1,3 +1,5 @@
+# escape=`
+
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -15,8 +17,7 @@ RUN uv venv --python 3.10 venv-py310 && `
     uv venv --python 3.13 venv-py313
 
 # Install AequilibraE for its dependencies, then remove it
-RUN powershell -Command `
-    venv-py310/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
+RUN venv-py310/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
     venv-py311/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
     venv-py312/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate && `
     venv-py313/bin/activate && uv pip install aequilibrae && uv pip uninstall aequilibrae && deactivate

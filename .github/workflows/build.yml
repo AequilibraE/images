@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Windows CI
         shell: powershell
-        run: docker build -t windows-ci:latest -f Dockerfile-windows-ci ci/aequilibrae/
+        run: docker build -t windows-ci:latest -f Dockerfile-windows-ci ci\aequilibrae\
         
   build-ubuntu:
     runs-on: ubuntu-latest
