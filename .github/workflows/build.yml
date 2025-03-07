@@ -80,9 +80,5 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          docker build -f ${{ matrix.DOCKERFILE }} -t $env:DOCKER_TAG .
-          docker push $env:DOCKER_TAG
-        env:
-          DOCKER_TAG: ${{ steps.meta.outputs.tags }}
-          MATRIX_DOCKERFILE: ${{ matrix.DOCKERFILE }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          docker build -f ${{ matrix.DOCKERFILE }} -t ${{ steps.meta.outputs.tags }} -label ${{ steps.meta.outputs.labels }} .
+          docker push ${{ steps.meta.outputs.tags }}
