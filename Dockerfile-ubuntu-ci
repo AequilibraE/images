@@ -4,11 +4,17 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -y && `
-    apt install -y libsqlite3-mod-spatialite libspatialite-dev git && `
+    apt install -y --no-install-recommends curl ca-certificates libsqlite3-mod-spatialite libspatialite-dev git && `
     ln -s /usr/lib/x86_64-linux-gnu/mod_spatialite.so /usr/lib/x86_64-linux-gnu/mod_spatialite
 
 # Install UV to manage Python versions and venvs
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ADD https://astral.sh/uv/0.6.5/install.sh /uv-installer.sh
+
+# Run the installer then remove it
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
 
 # Create venvs (and install python versions), use source venv-py310/bin/activate to activate
 RUN uv venv --python 3.10 venv-py310 && `
