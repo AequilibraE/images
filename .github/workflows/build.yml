@@ -14,8 +14,8 @@ jobs:
           - os: windows-latest
             DOCKERFILE: Dockerfile-windows-ci
 
-          # - os: ubuntu-latest
-          #   DOCKERFILE: Dockerfile-ubuntu-ci
+          - os: ubuntu-latest
+            DOCKERFILE: Dockerfile-ubuntu-ci
 
     permissions:
       packages: write
@@ -80,16 +80,9 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          docker build -f $env:MATRIX_DOCKERFILE -t $env:DOCKER_TAG .
+          docker build -f ${{ matrix.DOCKERFILE }} -t $env:DOCKER_TAG .
           docker push $env:DOCKER_TAG
         env:
           DOCKER_TAG: ${{ steps.meta.outputs.tags }}
           MATRIX_DOCKERFILE: ${{ matrix.DOCKERFILE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate artefact attestation
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ghcr.io/${{ github.repository }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
