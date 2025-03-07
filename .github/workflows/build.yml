@@ -13,9 +13,11 @@ jobs:
         include:
           - os: windows-latest
             DOCKERFILE: Dockerfile-windows-ci
+            BASE_OS: servercore:ltsc2022
 
           - os: ubuntu-latest
             DOCKERFILE: Dockerfile-ubuntu-ci
+            BASE_OS: ubuntu:24.04
 
     permissions:
       packages: write
@@ -67,12 +69,11 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=raw,value=os=${{ matrix.os }}
+            type=raw,value=os=${{ matrix.BASE_OS }}
             type=raw,value=aequilibrae_ref=${{ env.LATEST_TAG }}
+            type=raw,value=build-date=${{ github.run_date }}
+            type=schedule
+            type=sha
 
       - name: Build and push Docker images
         run: |
