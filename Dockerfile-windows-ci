@@ -2,8 +2,7 @@
 
 FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
-# Set PowerShell as the default shell
-SHELL ["powershell", "-Command"]
+SHELL ["cmd", "/S", "/C"]
 
 # Download channel for fixed install.
 ARG CHANNEL_URL=https://aka.ms/vs/17/release/channel
@@ -16,10 +15,13 @@ ADD https://aka.ms/vs/17/release/vs_buildtools.exe C:\vs_buildtools.exe
 #     --installChannelUri C:\TEMP\VisualStudio.chman `
 #     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
 #     --installPath C:\BuildTools
-RUN C:\vs_buildtools.exe --passive --wait --norestart --nocache `
+RUN start /w C:\vs_buildtools.exe --passive --wait --norestart --nocache `
     --installPath 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools' `
     --add Microsoft.VisualStudio.Workload.VCTools `
     --includeRecommended
+
+# Set PowerShell as the default shell
+SHELL ["powershell", "-Command"]
 
 # # Install 7-zip to extract SpatiaLite files
 # RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-installer.exe; `
