@@ -12,7 +12,7 @@ ADD https://aka.ms/vs/17/release/channel C:\TEMP\VisualStudio.chman
 ADD https://aka.ms/vs/17/release/vs_buildtools.exe C:\vs_buildtools.exe
 RUN Start-Process -Wait -FilePath C:\vs_buildtools.exe -ArgumentList @(' `
     --quiet --wait --norestart --nocache `
-    --installPath 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools' `
+    --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" `
     --add Microsoft.VisualStudio.Workload.VCTools `
     --channelUri C:\TEMP\VisualStudio.chman `
     --installChannelUri C:\TEMP\VisualStudio.chman `
