@@ -17,7 +17,7 @@ ADD https://aka.ms/vs/17/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
 #     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
 #     --installPath C:\BuildTools
 RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
-    --installPath "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools" `
+    --installPath \"%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools\" `
     --add Microsoft.VisualStudio.Workload.AzureBuildTools `
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
