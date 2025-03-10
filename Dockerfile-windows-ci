@@ -21,34 +21,34 @@ RUN C:\vs_buildtools.exe --passive --wait --norestart --nocache `
     --add Microsoft.VisualStudio.Workload.VCTools `
     --includeRecommended
 
-# Install 7-zip to extract SpatiaLite files
-RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-installer.exe; `
-    Start-Process -FilePath .\7z-installer.exe -ArgumentList '/S' -Wait; `
-    Remove-Item -Path .\7z-installer.exe
+# # Install 7-zip to extract SpatiaLite files
+# RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-installer.exe; `
+#     Start-Process -FilePath .\7z-installer.exe -ArgumentList '/S' -Wait; `
+#     Remove-Item -Path .\7z-installer.exe
 
-# Download and extract SpatiaLite
-RUN Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z; `
-    & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\spatialite; `
-    Remove-Item -Path .\mod_spatialite.7z;
+# # Download and extract SpatiaLite
+# RUN Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z; `
+#     & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\spatialite; `
+#     Remove-Item -Path .\mod_spatialite.7z;
 
-RUN setx /M PATH $($Env:PATH + ';C:\spatialite')
+# RUN setx /M PATH $($Env:PATH + ';C:\spatialite')
 
-# Install UV to manage Python versions and venvs
-ADD https://astral.sh/uv/0.6.5/install.ps1 C:\TEMP\uv-install.ps1
-RUN powershell -ExecutionPolicy Bypass -File C:\TEMP\uv-install.ps1
+# # Install UV to manage Python versions and venvs
+# ADD https://astral.sh/uv/0.6.5/install.ps1 C:\TEMP\uv-install.ps1
+# RUN powershell -ExecutionPolicy Bypass -File C:\TEMP\uv-install.ps1
 
-# Create venvs (and install python versions), use venv-py310\Scripts\activate to activate
-RUN uv venv --python 3.9  venv-py39; `
-    uv venv --python 3.10 venv-py310; `
-    uv venv --python 3.11 venv-py311; `
-    uv venv --python 3.12 venv-py312
+# # Create venvs (and install python versions), use venv-py310\Scripts\activate to activate
+# RUN uv venv --python 3.9  venv-py39; `
+#     uv venv --python 3.10 venv-py310; `
+#     uv venv --python 3.11 venv-py311; `
+#     uv venv --python 3.12 venv-py312
 
-COPY aequilibrae aequilibrae
-# Install AequilibraE for its dependencies, then remove it
-RUN venv-py39\Scripts\activate;  uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
-    venv-py310\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
-    venv-py311\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
-    venv-py312\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate
+# COPY aequilibrae aequilibrae
+# # Install AequilibraE for its dependencies, then remove it
+# RUN venv-py39\Scripts\activate;  uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+#     venv-py310\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+#     venv-py311\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate; `
+#     venv-py312\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate
 
 
 RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
