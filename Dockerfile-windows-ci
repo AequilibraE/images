@@ -53,5 +53,5 @@ SHELL ["powershell", "-Command"]
 #     venv-py312\Scripts\activate; uv pip install -r aequilibrae/requirements.txt -r aequilibrae/tests/requirements_tests.txt -r aequilibrae/docs/requirements-docs.txt; deactivate
 
 
-RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
-RUN Remove-Item -Path C:\TEMP -Recurse -Force
+# RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
+# RUN Remove-Item -Path C:\TEMP -Recurse -Force
