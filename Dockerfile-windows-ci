@@ -36,12 +36,15 @@ RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-in
     Start-Process -FilePath .\7z-installer.exe -ArgumentList '/S' -Wait; `
     Remove-Item -Path .\7z-installer.exe
 
-# Download and extract SpatiaLite
+# Extract SpatiaLite and move contents to the desired location, ignoring the top-level directory
 RUN Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z; `
-    & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\spatialite; `
-    Remove-Item -Path .\mod_spatialite.7z;
+    & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\TEMP\spatialite; `
+    Move-Item -Path C:\TEMP\spatialite\mod_spatialite-5.1.0-win-amd64\* -Destination C:\spatialite -Force; `
+    Remove-Item -Path .\mod_spatialite.7z -Force; `
+    Remove-Item -Path C:\TEMP\spatialite -Recurse -Force;
 
 RUN setx /M PATH $($Env:PATH + ';C:\spatialite')
+RUN setx /M AEQ_SPATIALITE_DIR 'C:\spatialite'
 
 # Install UV to manage Python versions and venvs
 ADD https://astral.sh/uv/0.6.5/install.ps1 C:\TEMP\uv-install.ps1
@@ -64,4 +67,4 @@ RUN venv-py39\Scripts\activate;  uv pip install -r aequilibrae/requirements.txt 
 RUN Remove-Item -Path C:\aequilibrae -Recurse -Force
 RUN Remove-Item -Path C:\TEMP -Recurse -Force
 
-ENTRYPOINT ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat", "&&", "powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
+ENTRYPOINT ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat", "&&", "powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
