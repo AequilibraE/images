@@ -3,6 +3,7 @@ name: Build Docker images for AequilibraE CI
 on:
   push:
     branches: [ main ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -19,6 +20,10 @@ jobs:
             DOCKERFILE: Dockerfile-ubuntu-ci
             BASE_OS: ubuntu-24.04
 
+          - os: windows-latest
+            DOCKERFILE: Dockerfile-qgis-ci
+            BASE_OS: windows-qgis
+          
     permissions:
       packages: write
       contents: read
@@ -68,6 +73,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker images
+        if: matrix.BASE_OS != 'windows-qgis'
         run: |
           docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" --label "org.opencontainers.image.description=${{ matrix.BASE_OS }} CI image based on AequilibraE ${{ env.LATEST_TAG }}" .
+          docker push "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest"
+      
+      - name: Build and push Docker images
+        if: matrix.BASE_OS == 'windows-qgis'
+        run: |
+          docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" --label "org.opencontainers.image.description=windows with QGIS installed" .
           docker push "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest"
