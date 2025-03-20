@@ -3,6 +3,7 @@ name: Build Docker images for AequilibraE CI
 on:
   push:
     branches: [ main ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -19,6 +20,10 @@ jobs:
             DOCKERFILE: Dockerfile-ubuntu-ci
             BASE_OS: ubuntu-24.04
 
+          - os: windows-latest
+            DOCKERFILE: Dockerfile-qgis-ci
+            BASE_OS: windows-qgis
+          
     permissions:
       packages: write
       contents: read
