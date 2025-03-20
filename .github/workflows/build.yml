@@ -73,6 +73,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker images
+        if: matrix.BASE_OS != 'windows-qgis'
         run: |
           docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" --label "org.opencontainers.image.description=${{ matrix.BASE_OS }} CI image based on AequilibraE ${{ env.LATEST_TAG }}" .
+          docker push "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest"
+      
+      - name: Build and push Docker images
+        if: matrix.BASE_OS == 'windows-qgis'
+        run: |
+          docker build -f ${{ matrix.DOCKERFILE }} -t "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest" --label "org.opencontainers.image.description=windows with QGIS installed" .
           docker push "ghcr.io/aequilibrae/ci-${{ matrix.BASE_OS }}:latest"
