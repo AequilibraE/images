@@ -39,6 +39,7 @@ RUN Invoke-WebRequest -Uri https://www.7-zip.org/a/7z2201-x64.exe -OutFile 7z-in
 # Extract SpatiaLite and move contents to the desired location, ignoring the top-level directory
 RUN Invoke-WebRequest -Uri http://www.gaia-gis.it/gaia-sins/windows-bin-amd64/mod_spatialite-5.1.0-win-amd64.7z -OutFile mod_spatialite.7z; `
     & 'C:\Program Files\7-Zip\7z.exe' x mod_spatialite.7z -oC:\TEMP\spatialite; `
+    New-Item -ItemType Directory -Path C:\spatialite -Force; `
     Move-Item -Path C:\TEMP\spatialite\mod_spatialite-5.1.0-win-amd64\* -Destination C:\spatialite -Force; `
     Remove-Item -Path .\mod_spatialite.7z -Force; `
     Remove-Item -Path C:\TEMP\spatialite -Recurse -Force;
